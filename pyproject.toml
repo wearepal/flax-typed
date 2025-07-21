@@ -1,0 +1,25 @@
+[project]
+name = "flax-typed"
+version = "0.1.0"
+description = "Typed re-exports from flax"
+readme = "README.md"
+authors = [
+    { name = "Thomas M Kehrenberg", email = "tmke8@posteo.net" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "flax>=0.10.7",
+]
+
+[build-system]
+requires = ["uv_build>=0.8.0,<0.9"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
+
+[tool.pyright]
+typeCheckingMode = "strict"
+pythonVersion = "3.12"
+venvPath = "."
+venv = ".venv"
