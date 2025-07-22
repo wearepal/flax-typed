@@ -1,7 +1,9 @@
 from collections.abc import Callable, Iterable, Sequence
 from typing import Protocol, overload, Any
+from flax.nnx.variablelib import VariableState
 import jax
 from flax.nnx.transforms.autodiff import DiffState, AxisName
+from flax.nnx.statelib import State
 
 class JitWrapped[**P, R]:
     """A function ready to be traced, lowered, and compiled.
@@ -60,7 +62,6 @@ class JitWrapped[**P, R]:
 class _PreserveFunction(Protocol):
     def __call__[**P, R](self, f: Callable[P, R]) -> Callable[P, R]: ...
 
-
 @overload
 def jit[**P, R](
     *,
@@ -92,7 +93,6 @@ def jit[**P, R](
     inline: bool = False,
     abstracted_axes: Any | None = None,
 ) -> JitWrapped[P, R]: ...
-
 @overload
 def value_and_grad[**P, R](
     f: Callable[P, R],
@@ -102,7 +102,7 @@ def value_and_grad[**P, R](
     holomorphic: bool = False,
     allow_int: bool = False,
     reduce_axes: Sequence[AxisName] = (),
-) -> Callable[P, tuple[R, R]]: ...
+) -> Callable[P, tuple[R, State[str, State[str, VariableState]]]]: ...
 @overload
 def value_and_grad[**P, R](
     *,
@@ -111,4 +111,6 @@ def value_and_grad[**P, R](
     holomorphic: bool = False,
     allow_int: bool = False,
     reduce_axes: Sequence[AxisName] = (),
-) -> Callable[[Callable[P, R]], Callable[P, tuple[R, R]]]: ...
+) -> Callable[
+    [Callable[P, R]], Callable[P, tuple[R, State[str, State[str, VariableState]]]]
+]: ...
